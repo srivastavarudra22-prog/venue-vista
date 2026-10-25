@@ -1,0 +1,204 @@
+<div class="events-page">
+
+  <!-- Header -->
+  <header class="events-header">
+
+    <div>
+      <h1>VenueVista</h1>
+      <p>Upcoming Events</p>
+    </div>
+
+    <a
+      routerLink="/dashboard"
+      class="back-btn"
+    >
+      Back to Dashboard
+    </a>
+
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="events-content">
+
+    <div class="page-title">
+      <h2>Explore Events</h2>
+      <p>Browse upcoming events and ticket information.</p>
+    </div>
+
+
+    <!-- Loading -->
+    <div
+      class="loading-message"
+      *ngIf="isLoading"
+    >
+      Loading events...
+    </div>
+
+
+    <!-- Error -->
+    <div
+      class="error-message"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- No Events -->
+    <div
+      class="empty-message"
+      *ngIf="!isLoading && !errorMessage && events.length === 0"
+    >
+      No events available.
+    </div>
+
+
+    <!-- Events -->
+    <div
+      class="events-grid"
+      *ngIf="!isLoading && events.length > 0"
+    >
+
+      <div
+        class="event-card"
+        *ngFor="let event of events"
+      >
+
+        <!-- Header -->
+        <div class="event-card-header">
+
+          <div class="event-icon">
+            🎫
+          </div>
+
+          <!-- Only explicitly false means unavailable -->
+          <span
+            class="availability"
+            [class.unavailable]="event.available === false"
+          >
+            {{ event.available === false ? 'Unavailable' : 'Available' }}
+          </span>
+
+        </div>
+
+
+        <!-- Details -->
+        <div class="event-details">
+
+          <h3>
+            {{ event.name }}
+          </h3>
+
+          <p
+            class="category"
+            *ngIf="event.category"
+          >
+            {{ event.category }}
+          </p>
+
+          <p class="description">
+            {{ event.description || 'No description available.' }}
+          </p>
+
+
+          <!-- Date / Time -->
+          <div class="event-info">
+
+            <div class="info-item">
+              <span class="label">Date</span>
+
+              <strong>
+                {{ event.eventDate }}
+              </strong>
+            </div>
+
+            <div
+              class="info-item"
+              *ngIf="event.eventTime"
+            >
+              <span class="label">Time</span>
+
+              <strong>
+                {{ event.eventTime }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- Venue -->
+          <div
+            class="venue-info"
+            *ngIf="event.venue"
+          >
+
+            <span class="label">
+              Venue
+            </span>
+
+            <strong>
+              {{ event.venue.name }}
+            </strong>
+
+            <span>
+              📍 {{ event.venue.location }}
+            </span>
+
+          </div>
+
+
+          <!-- Ticket Information -->
+          <div class="ticket-info">
+
+            <div>
+              <span class="label">
+                Ticket Price
+              </span>
+
+              <strong>
+                ₹{{ event.ticketPrice }}
+              </strong>
+            </div>
+
+            <div>
+              <span class="label">
+                Total Seats
+              </span>
+
+              <strong>
+                {{ event.totalSeats }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- Book Ticket -->
+          <a
+            *ngIf="event.available !== false"
+            [routerLink]="['/booking', event.id]"
+            class="book-btn"
+          >
+            Book Ticket
+          </a>
+
+
+          <!-- Unavailable -->
+          <button
+            *ngIf="event.available === false"
+            class="book-btn"
+            disabled
+          >
+            Not Available
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>

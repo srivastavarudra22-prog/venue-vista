@@ -1,0 +1,14 @@
+### Add Venue
+POST http://localhost:8080/api/venues
+Content-Type: application/json
+
+{
+  "name": "The Grand Palace",
+  "location": "Ghaziabad",
+  "description": "A beautiful venue for weddings and events",
+  "category": "Wedding Hall",
+  "capacity": 500,
+  "pricePerDay": 50000,
+  "imageUrl": "https://example.com/venue.jpg",
+  "available": true
+}

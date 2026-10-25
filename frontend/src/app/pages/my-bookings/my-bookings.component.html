@@ -1,0 +1,190 @@
+<div class="bookings-page">
+
+  <!-- Header -->
+  <header class="bookings-header">
+
+    <div>
+      <h1>VenueVista</h1>
+      <p>My Bookings</p>
+    </div>
+
+    <a
+      routerLink="/dashboard"
+      class="back-btn"
+    >
+      Back to Dashboard
+    </a>
+
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="bookings-content">
+
+    <div class="page-title">
+      <h2>My Bookings</h2>
+      <p>View all your previous and current bookings.</p>
+    </div>
+
+
+    <!-- Loading -->
+    <div
+      class="loading-message"
+      *ngIf="isLoading"
+    >
+      Loading your bookings...
+    </div>
+
+
+    <!-- Error -->
+    <div
+      class="error-message"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- No Bookings -->
+    <div
+      class="empty-message"
+      *ngIf="!isLoading && !errorMessage && bookings.length === 0"
+    >
+      <div class="empty-icon">📅</div>
+
+      <h3>No Bookings Found</h3>
+
+      <p>
+        You have not made any bookings yet.
+      </p>
+
+      <a
+        routerLink="/events"
+        class="browse-btn"
+      >
+        Browse Events
+      </a>
+    </div>
+
+
+    <!-- Booking Cards -->
+    <div
+      class="bookings-grid"
+      *ngIf="!isLoading && bookings.length > 0"
+    >
+
+      <div
+        class="booking-card"
+        *ngFor="let booking of bookings"
+      >
+
+        <!-- Booking Header -->
+        <div class="booking-card-header">
+
+          <div>
+            <span class="booking-label">
+              Booking ID
+            </span>
+
+            <strong>
+              #{{ booking.id }}
+            </strong>
+          </div>
+
+          <span
+            class="status"
+            [ngClass]="{
+              'confirmed': booking.status === 'CONFIRMED',
+              'pending': booking.status === 'PENDING',
+              'cancelled': booking.status === 'CANCELLED' || booking.status === 'REJECTED'
+            }"
+          >
+            {{ booking.status === 'CONFIRMED' ? '✓ Approved' : (booking.status === 'PENDING' ? '⏳ Pending Approval' : '✕ Rejected') }}
+          </span>
+
+        </div>
+
+
+        <!-- Booking Details -->
+        <div class="booking-details">
+
+          <div class="detail-item">
+            <span>Venue</span>
+
+            <strong>
+              {{ booking.venue?.name || 'Venue' }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Location</span>
+
+            <strong>
+              {{ booking.venue?.location || 'Not available' }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Event Date</span>
+
+            <strong>
+              {{ booking.eventDate }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Booking Date</span>
+
+            <strong>
+              {{ booking.bookingDate }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Number of Guests</span>
+
+            <strong>
+              {{ booking.numberOfGuests }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Total Amount</span>
+
+            <strong class="amount">
+              ₹{{ booking.totalAmount }}
+            </strong>
+          </div>
+
+        </div>
+
+        <!-- Provider Rejection Reason Banner -->
+        <div class="rejection-box" *ngIf="booking.rejectionReason && (booking.status === 'REJECTED' || booking.status === 'CANCELLED')">
+          <div class="rejection-title">
+            <span>⚠️ Host Rejection Reason:</span>
+          </div>
+          <p class="rejection-msg">{{ booking.rejectionReason }}</p>
+        </div>
+
+        <!-- Pending Status Notice -->
+        <div class="pending-notice" *ngIf="booking.status === 'PENDING'">
+          <span>⏳ Request Submitted: Waiting for the venue provider to review and approve your reservation.</span>
+        </div>
+
+        <!-- Approved Status Notice -->
+        <div class="approved-notice" *ngIf="booking.status === 'CONFIRMED'">
+          <span>🎉 Approved by Host: Your reservation is confirmed!</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>

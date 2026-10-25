@@ -1,0 +1,85 @@
+<div class="provider-register-page">
+
+  <div class="provider-register-card">
+
+    <div class="provider-badge">
+      <span>🏛️ VenueVista Provider Portal</span>
+    </div>
+
+    <div class="provider-header">
+      <h1>Register as Venue Host</h1>
+      <p>List your event venues, reach thousands of customers, and manage bookings.</p>
+    </div>
+
+    <form (ngSubmit)="register()">
+
+      <div class="form-group">
+        <label for="companyName">Business / Host Name</label>
+        <input
+          type="text"
+          id="companyName"
+          name="name"
+          placeholder="e.g. Royal Grand Venues Ltd."
+          [(ngModel)]="name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="providerEmail">Business Email</label>
+        <input
+          type="email"
+          id="providerEmail"
+          name="email"
+          placeholder="host@venuevista.com"
+          [(ngModel)]="email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="providerPassword">Password</label>
+        <input
+          type="password"
+          id="providerPassword"
+          name="password"
+          placeholder="Create secure password"
+          [(ngModel)]="password"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="providerPhone">Contact Phone Number (10 digits)</label>
+        <input
+          type="tel"
+          id="providerPhone"
+          name="phone"
+          placeholder="9876543210"
+          [(ngModel)]="phone"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="provider-btn"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Creating Account...' : 'Register as Provider' }}
+      </button>
+
+    </form>
+
+    <p class="success-message" *ngIf="message">{{ message }}</p>
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="footer-links">
+      <p>Already registered? <a routerLink="/provider/login">Sign in to Provider Portal</a></p>
+      <div class="divider"></div>
+      <p class="customer-switch">Looking to book venues? <a routerLink="/login">Customer Login &rarr;</a></p>
+    </div>
+
+  </div>
+
+</div>

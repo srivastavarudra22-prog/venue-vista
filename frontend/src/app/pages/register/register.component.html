@@ -1,0 +1,112 @@
+<div class="register-page">
+
+  <div class="register-card">
+
+    <div class="register-header">
+      <h1>VenueVista</h1>
+      <p>Create your account to get started.</p>
+    </div>
+
+    <form (ngSubmit)="register()">
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Enter your full name"
+          [(ngModel)]="name"
+          required
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          [(ngModel)]="email"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Create a password"
+          [(ngModel)]="password"
+          required
+        />
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="Enter 10-digit phone number"
+          [(ngModel)]="phone"
+          pattern="[0-9]{10}"
+          maxlength="10"
+          required
+        />
+
+        <small class="password-info">
+          Phone number must contain exactly 10 digits.
+        </small>
+      </div>
+
+      <!-- Register Button -->
+      <button
+        type="submit"
+        class="register-btn"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+      </button>
+
+    </form>
+
+    <!-- Success Message -->
+    <p
+      class="success-message"
+      *ngIf="message"
+    >
+      {{ message }}
+    </p>
+
+    <!-- Error Message -->
+    <p
+      class="error-message"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+    </p>
+
+    <!-- Login Link -->
+    <div class="login-link">
+      <p>Already have an account?</p>
+
+      <a href="/login">
+        Login here
+      </a>
+    </div>
+
+  </div>
+
+</div>

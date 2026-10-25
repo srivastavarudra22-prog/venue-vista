@@ -1,0 +1,337 @@
+<div class="venues-page">
+
+  <!-- Header -->
+  <header class="venues-header">
+
+    <div>
+      <h1>VenueVista</h1>
+      <p>Available Venues</p>
+    </div>
+
+    <a
+      routerLink="/dashboard"
+      class="back-btn"
+    >
+      Back to Dashboard
+    </a>
+
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="venues-content">
+
+    <div class="page-title">
+      <h2>Explore Venues</h2>
+      <p>Find the perfect venue for your event.</p>
+    </div>
+
+
+    <!-- Loading -->
+    <div
+      class="loading-message"
+      *ngIf="isLoading"
+    >
+      Loading venues...
+    </div>
+
+
+    <!-- Main Error -->
+    <div
+      class="error-message"
+      *ngIf="errorMessage && !selectedVenue"
+    >
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- No Venues -->
+    <div
+      class="empty-message"
+      *ngIf="!isLoading && !errorMessage && venues.length === 0"
+    >
+      No venues available.
+    </div>
+
+
+    <!-- Venue Cards -->
+    <div
+      class="venues-grid"
+      *ngIf="!isLoading && venues.length > 0"
+    >
+
+      <div
+        class="venue-card"
+        *ngFor="let venue of venues"
+      >
+
+        <!-- Image -->
+        <div class="venue-image">
+
+          <img
+            *ngIf="venue.imageUrl"
+            [src]="venue.imageUrl"
+            [alt]="venue.name"
+          />
+
+          <div
+            class="no-image"
+            *ngIf="!venue.imageUrl"
+          >
+            No Image
+          </div>
+
+        </div>
+
+
+        <!-- Venue Details -->
+        <div class="venue-details">
+
+          <div class="venue-top">
+
+            <h3>
+              {{ venue.name }}
+            </h3>
+
+            <span
+              class="availability"
+              [class.unavailable]="venue.available === false"
+            >
+              {{
+                venue.available === false
+                  ? 'Unavailable'
+                  : 'Available'
+              }}
+            </span>
+
+          </div>
+
+
+          <p class="location">
+            📍 {{ venue.location }}
+          </p>
+
+
+          <p
+            class="category"
+            *ngIf="venue.category"
+          >
+            Category: {{ venue.category }}
+          </p>
+
+
+          <p class="description">
+            {{
+              venue.description ||
+              'No description available.'
+            }}
+          </p>
+
+
+          <!-- Venue Information -->
+          <div class="venue-info">
+
+            <div>
+              <span class="label">
+                Capacity
+              </span>
+
+              <strong>
+                {{ venue.capacity }} people
+              </strong>
+            </div>
+
+            <div>
+              <span class="label">
+                Price / Day
+              </span>
+
+              <strong>
+                ₹{{ venue.pricePerDay }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- Book Venue -->
+          <button
+            *ngIf="venue.available !== false"
+            type="button"
+            class="book-btn"
+            (click)="openBooking(venue)"
+          >
+            Book Venue
+          </button>
+
+
+          <!-- Venue Unavailable -->
+          <button
+            *ngIf="venue.available === false"
+            type="button"
+            class="book-btn"
+            disabled
+          >
+            Not Available
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Venue Booking Form -->
+    <div
+      class="booking-section"
+      *ngIf="selectedVenue"
+    >
+
+      <div class="booking-card">
+
+        <!-- Booking Header -->
+        <div class="booking-header">
+
+          <div>
+            <h2>
+              Book {{ selectedVenue.name }}
+            </h2>
+
+            <p>
+              {{ selectedVenue.location }}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="close-btn"
+            (click)="closeBooking()"
+          >
+            ✕
+          </button>
+
+        </div>
+
+
+        <!-- Booking Form -->
+        <div class="booking-form">
+
+          <!-- Date -->
+          <div class="form-group">
+
+            <label for="bookingDate">
+              Booking Date
+            </label>
+
+            <input
+              type="date"
+              id="bookingDate"
+              name="bookingDate"
+              [(ngModel)]="selectedDate"
+              required
+            />
+
+          </div>
+
+
+          <!-- Guests -->
+          <div class="form-group">
+
+            <label for="numberOfGuests">
+              Number of Guests
+            </label>
+
+            <input
+              type="number"
+              id="numberOfGuests"
+              name="numberOfGuests"
+              min="1"
+              [max]="selectedVenue.capacity"
+              [(ngModel)]="numberOfGuests"
+              required
+            />
+
+            <small>
+              Maximum {{ selectedVenue.capacity }} guests
+            </small>
+
+          </div>
+
+
+          <!-- Booking Summary -->
+          <div class="booking-summary">
+
+            <div>
+              <span>Venue</span>
+
+              <strong>
+                {{ selectedVenue.name }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Price per day</span>
+
+              <strong>
+                ₹{{ selectedVenue.pricePerDay }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- Error -->
+          <p
+            class="form-error"
+            *ngIf="errorMessage"
+          >
+            {{ errorMessage }}
+          </p>
+
+
+          <!-- Success -->
+          <p
+            class="form-success"
+            *ngIf="bookingMessage"
+          >
+            {{ bookingMessage }}
+          </p>
+
+
+          <!-- Actions -->
+          <div class="booking-actions">
+
+            <button
+              type="button"
+              class="cancel-btn"
+              (click)="closeBooking()"
+              [disabled]="isBooking"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              class="confirm-btn"
+              (click)="confirmVenueBooking()"
+              [disabled]="isBooking || !!bookingMessage"
+            >
+              {{
+                isBooking
+                  ? 'Booking...'
+                  : 'Confirm Venue Booking'
+              }}
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>

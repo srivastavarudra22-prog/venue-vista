@@ -1,0 +1,432 @@
+<div class="provider-dashboard-page">
+
+  <!-- Top Navbar -->
+  <header class="provider-navbar">
+    <div class="nav-left">
+      <div class="logo">VenueVista</div>
+      <span class="portal-tag">Host & Provider Hub</span>
+    </div>
+
+    <div class="nav-right">
+      <div class="user-info">
+        <span class="user-name">{{ userName }}</span>
+        <span class="role-badge">{{ userRole }}</span>
+      </div>
+
+      <a routerLink="/dashboard" class="switch-view-btn" title="View Customer Portal">
+        Customer View
+      </a>
+
+      <button class="logout-btn" (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="dashboard-body">
+
+    <!-- Alerts -->
+    <div class="action-alert success" *ngIf="actionMessage">
+      {{ actionMessage }}
+    </div>
+    <div class="action-alert error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Pending Requests Attention Banner -->
+    <div class="pending-alert-banner" *ngIf="pendingCount > 0">
+      <div class="pending-alert-left">
+        <span class="bell-icon">🔔</span>
+        <div>
+          <strong>You have {{ pendingCount }} pending booking request{{ pendingCount > 1 ? 's' : '' }} awaiting approval!</strong>
+          <p>Please review customer requests below to approve or reject with a reason.</p>
+        </div>
+      </div>
+      <button class="view-pending-btn" (click)="activeTab = 'bookings'; statusFilter = 'PENDING'">
+        Review Requests ({{ pendingCount }})
+      </button>
+    </div>
+
+    <!-- KPI Stats Section -->
+    <section class="kpi-section">
+      <div class="kpi-card">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Confirmed Revenue</span>
+          <h2 class="kpi-value">₹{{ totalRevenue | number }}</h2>
+        </div>
+      </div>
+
+      <div class="kpi-card highlight-pending">
+        <div class="kpi-icon">⏳</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Pending Approval</span>
+          <h2 class="kpi-value">{{ pendingCount }}</h2>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Approved Bookings</span>
+          <h2 class="kpi-value">{{ confirmedCount }}</h2>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">🏛️</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Listed Venues</span>
+          <h2 class="kpi-value">{{ venues.length }}</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs & Actions -->
+    <div class="dashboard-tabs-bar">
+      <div class="tabs-group">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'bookings'"
+          (click)="activeTab = 'bookings'"
+        >
+          📋 Customer Bookings ({{ bookings.length }})
+        </button>
+
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'venues'"
+          (click)="activeTab = 'venues'"
+        >
+          🏢 Venue Inventory ({{ venues.length }})
+        </button>
+      </div>
+
+      <button
+        *ngIf="activeTab === 'venues'"
+        class="add-venue-btn"
+        (click)="openAddVenueModal()"
+      >
+        + Add New Venue
+      </button>
+    </div>
+
+    <!-- ================= TAB 1: BOOKINGS MANAGEMENT ================= -->
+    <section *ngIf="activeTab === 'bookings'" class="tab-content">
+
+      <!-- Status Filters -->
+      <div class="filter-bar">
+        <span class="filter-title">Filter Requests:</span>
+        <button
+          class="filter-pill"
+          [class.active]="statusFilter === 'ALL'"
+          (click)="statusFilter = 'ALL'"
+        >
+          All ({{ bookings.length }})
+        </button>
+        <button
+          class="filter-pill pending"
+          [class.active]="statusFilter === 'PENDING'"
+          (click)="statusFilter = 'PENDING'"
+        >
+          Pending Review ({{ pendingCount }})
+        </button>
+        <button
+          class="filter-pill confirmed"
+          [class.active]="statusFilter === 'CONFIRMED'"
+          (click)="statusFilter = 'CONFIRMED'"
+        >
+          Approved ({{ confirmedCount }})
+        </button>
+        <button
+          class="filter-pill rejected"
+          [class.active]="statusFilter === 'REJECTED'"
+          (click)="statusFilter = 'REJECTED'"
+        >
+          Rejected ({{ rejectedCount }})
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoadingBookings">
+        <p>Loading bookings...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!isLoadingBookings && filteredBookings.length === 0">
+        <div class="empty-icon">📭</div>
+        <h3>No bookings found</h3>
+        <p>There are no customer reservations matching the selected filter.</p>
+      </div>
+
+      <!-- Bookings Table -->
+      <div class="table-container" *ngIf="!isLoadingBookings && filteredBookings.length > 0">
+        <table class="bookings-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Venue</th>
+              <th>Customer</th>
+              <th>Contact Details</th>
+              <th>Event Date</th>
+              <th>Guests</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Host Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of filteredBookings" [class.pending-row]="(b.status || '').toUpperCase() === 'PENDING'">
+              <td class="id-col">#{{ b.id }}</td>
+              <td>
+                <div class="venue-cell">
+                  <strong>{{ b.venue?.name || 'Venue #' + (b.venue?.id || 'N/A') }}</strong>
+                  <small>{{ b.venue?.location || 'Location N/A' }}</small>
+                </div>
+              </td>
+              <td>
+                <strong>{{ b.user?.name || 'Customer' }}</strong>
+              </td>
+              <td>
+                <div class="contact-cell">
+                  <span>✉️ {{ b.user?.email || 'N/A' }}</span>
+                  <span *ngIf="b.user?.phone">📞 {{ b.user?.phone }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="date-cell">
+                  <strong>{{ b.eventDate || 'N/A' }}</strong>
+                  <small *ngIf="b.bookingDate">Requested: {{ b.bookingDate }}</small>
+                </div>
+              </td>
+              <td>{{ b.numberOfGuests }}</td>
+              <td class="amount-col">₹{{ b.totalAmount | number }}</td>
+              <td>
+                <div class="status-cell">
+                  <span
+                    class="status-badge"
+                    [ngClass]="(b.status || 'PENDING').toLowerCase()"
+                  >
+                    {{ (b.status || '').toUpperCase() === 'CONFIRMED' ? '✓ Approved' : ((b.status || '').toUpperCase() === 'PENDING' ? '⏳ Pending' : '✕ Rejected') }}
+                  </span>
+
+                  <!-- Show rejection reason pill if rejected -->
+                  <div class="table-reason-note" *ngIf="b.rejectionReason && ((b.status || '').toUpperCase() === 'REJECTED' || (b.status || '').toUpperCase() === 'CANCELLED')">
+                    <small>💬 "{{ b.rejectionReason }}"</small>
+                  </div>
+                </div>
+              </td>
+              <td class="actions-col">
+                <div class="action-buttons">
+
+                  <!-- When PENDING: Show prominent Approve & Reject -->
+                  <ng-container *ngIf="(b.status || '').toUpperCase() === 'PENDING'">
+                    <button
+                      class="btn-approve"
+                      (click)="approveBooking(b)"
+                      title="Approve this customer's booking"
+                    >
+                      ✓ Approve
+                    </button>
+                    <button
+                      class="btn-reject"
+                      (click)="openRejectModal(b)"
+                      title="Reject this booking with reason"
+                    >
+                      ✕ Reject
+                    </button>
+                  </ng-container>
+
+                  <!-- When already CONFIRMED -->
+                  <div *ngIf="(b.status || '').toUpperCase() === 'CONFIRMED'" class="confirmed-state-actions">
+                    <span class="approved-text">✓ Approved</span>
+                    <button class="btn-cancel-link" (click)="openRejectModal(b)">
+                      Revoke
+                    </button>
+                  </div>
+
+                  <!-- When REJECTED -->
+                  <div *ngIf="(b.status || '').toUpperCase() === 'REJECTED' || (b.status || '').toUpperCase() === 'CANCELLED'" class="rejected-state-actions">
+                    <span class="rejected-text">Rejected</span>
+                    <button class="btn-approve-sm" (click)="approveBooking(b)">
+                      Re-approve
+                    </button>
+                  </div>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 2: VENUES INVENTORY ================= -->
+    <section *ngIf="activeTab === 'venues'" class="tab-content">
+
+      <div class="loading-state" *ngIf="isLoadingVenues">
+        <p>Loading venues...</p>
+      </div>
+
+      <div class="venues-grid" *ngIf="!isLoadingVenues">
+        <div class="venue-inventory-card" *ngFor="let v of venues">
+          <div class="card-img-wrap">
+            <img [src]="v.imageUrl || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=80'" [alt]="v.name" />
+            <span class="venue-cat-badge">{{ v.category || 'Venue' }}</span>
+          </div>
+
+          <div class="card-content">
+            <h3>{{ v.name }}</h3>
+            <p class="location-pin">📍 {{ v.location }}</p>
+            <p class="desc">{{ v.description || 'No description provided.' }}</p>
+
+            <div class="venue-stats">
+              <div class="stat-item">
+                <span class="label">Capacity</span>
+                <span class="val">{{ v.capacity }} guests</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">Price/Day</span>
+                <span class="val">₹{{ v.pricePerDay | number }}</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="avail-badge" [class.not-avail]="!v.available">
+                {{ v.available ? '● Available' : '○ Unavailable' }}
+              </span>
+              <button class="delete-btn" (click)="deleteVenue(v)">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= REJECTION REASON MODAL ================= -->
+  <div class="modal-overlay" *ngIf="showRejectModal" (click)="closeRejectModal()">
+    <div class="modal-card reject-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header reject-header">
+        <h2>✕ Reject Booking Request #{{ selectedBookingToReject?.id }}</h2>
+        <button class="close-x" (click)="closeRejectModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="booking-summary-box">
+          <p><strong>Customer:</strong> {{ selectedBookingToReject?.user?.name }} ({{ selectedBookingToReject?.user?.email }})</p>
+          <p><strong>Venue:</strong> {{ selectedBookingToReject?.venue?.name }}</p>
+          <p><strong>Event Date:</strong> {{ selectedBookingToReject?.eventDate }} | <strong>Guests:</strong> {{ selectedBookingToReject?.numberOfGuests }}</p>
+        </div>
+
+        <div class="rejection-prompt">
+          <label for="rejection-input"><strong>Please specify the reason for rejection *</strong></label>
+          <span class="sub-help">This explanation will be immediately displayed on the customer's "My Bookings" page.</span>
+
+          <!-- Quick reason buttons -->
+          <div class="quick-reasons-list">
+            <span class="quick-title">Quick Select:</span>
+            <button
+              type="button"
+              class="quick-pill"
+              *ngFor="let r of quickReasons"
+              (click)="setQuickReason(r)"
+            >
+              {{ r }}
+            </button>
+          </div>
+
+          <textarea
+            id="rejection-input"
+            rows="3"
+            [(ngModel)]="rejectionReason"
+            placeholder="e.g. Venue is reserved for scheduled maintenance on this date. Please choose another date or contact us directly."
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeRejectModal()">Cancel</button>
+        <button
+          type="button"
+          class="btn-reject-confirm"
+          [disabled]="isSubmittingRejection || !rejectionReason.trim()"
+          (click)="confirmRejection()"
+        >
+          {{ isSubmittingRejection ? 'Rejecting...' : 'Confirm Rejection & Send Reason' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADD VENUE MODAL ================= -->
+  <div class="modal-overlay" *ngIf="showAddVenueModal" (click)="closeAddVenueModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Add New Venue Listing</h2>
+        <button class="close-x" (click)="closeAddVenueModal()">✕</button>
+      </div>
+
+      <form (ngSubmit)="createVenue()">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Venue Name *</label>
+              <input type="text" [(ngModel)]="newVenue.name" name="name" placeholder="e.g. Royal Crystal Palace" required />
+            </div>
+            <div class="form-group">
+              <label>Location / City *</label>
+              <input type="text" [(ngModel)]="newVenue.location" name="location" placeholder="e.g. Noida Sector 62" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select [(ngModel)]="newVenue.category" name="category">
+                <option value="Wedding Hall">Wedding Hall</option>
+                <option value="Conference Center">Conference Center</option>
+                <option value="Open Lawn">Open Lawn</option>
+                <option value="Banquet Hall">Banquet Hall</option>
+                <option value="Resort">Resort & Gardens</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Guest Capacity</label>
+              <input type="number" [(ngModel)]="newVenue.capacity" name="capacity" min="10" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price Per Day (₹)</label>
+              <input type="number" [(ngModel)]="newVenue.pricePerDay" name="pricePerDay" min="1000" required />
+            </div>
+            <div class="form-group">
+              <label>Image URL</label>
+              <input type="url" [(ngModel)]="newVenue.imageUrl" name="imageUrl" placeholder="https://..." />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea [(ngModel)]="newVenue.description" name="description" rows="3" placeholder="Describe the ambiance, facilities, catering options..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeAddVenueModal()">Cancel</button>
+          <button type="submit" class="btn-submit" [disabled]="isSubmittingVenue">
+            {{ isSubmittingVenue ? 'Saving...' : 'Create Venue' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

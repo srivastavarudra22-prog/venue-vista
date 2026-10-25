@@ -1,0 +1,73 @@
+<div class="provider-login-page">
+
+  <div class="provider-login-card">
+
+    <div class="provider-badge">
+      <span>🏛️ VenueVista Provider Portal</span>
+    </div>
+
+    <div class="provider-header">
+      <h1>Host & Provider Login</h1>
+      <p>Manage your venues, approve bookings, and track your reservations.</p>
+    </div>
+
+    <!-- Demo Banner -->
+    <div class="demo-banner">
+      <div class="demo-title">⚡ Pre-configured Provider Account:</div>
+      <div class="demo-creds">
+        <span>Email: <strong>provider&#64;example.com</strong></span>
+        <span>Password: <strong>provider123</strong></span>
+      </div>
+      <button type="button" class="demo-fill-btn" (click)="useDemoCredentials()">
+        Autofill Credentials
+      </button>
+    </div>
+
+    <form (ngSubmit)="login()">
+
+      <div class="form-group">
+        <label for="provider-email">Provider Email</label>
+        <input
+          type="email"
+          id="provider-email"
+          name="email"
+          placeholder="provider@example.com"
+          [(ngModel)]="email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="provider-password">Password</label>
+        <input
+          type="password"
+          id="provider-password"
+          name="password"
+          placeholder="Enter password"
+          [(ngModel)]="password"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="provider-btn"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Authenticating...' : 'Sign In as Provider' }}
+      </button>
+
+    </form>
+
+    <p class="success-message" *ngIf="message">{{ message }}</p>
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="footer-links">
+      <p>New Venue Host? <a routerLink="/provider/register">Register as Provider</a></p>
+      <div class="divider"></div>
+      <p class="customer-switch">Looking to book a venue? <a routerLink="/login">Customer Login &rarr;</a></p>
+    </div>
+
+  </div>
+
+</div>

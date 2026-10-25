@@ -1,0 +1,258 @@
+<div class="booking-page">
+
+  <!-- Header -->
+  <header class="booking-header">
+
+    <div>
+      <h1>VenueVista</h1>
+      <p>Confirm Your Booking</p>
+    </div>
+
+    <a
+      routerLink="/events"
+      class="back-btn"
+    >
+      Back to Events
+    </a>
+
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="booking-content">
+
+    <!-- Loading Event -->
+    <div
+      class="loading-message"
+      *ngIf="isLoading"
+    >
+      Loading event details...
+    </div>
+
+
+    <!-- Error -->
+    <div
+      class="error-message"
+      *ngIf="errorMessage && !event"
+    >
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- Booking Card -->
+    <div
+      class="booking-card"
+      *ngIf="event && !isLoading"
+    >
+
+      <!-- Event Information -->
+      <div class="event-section">
+
+        <div class="event-icon">
+          🎫
+        </div>
+
+        <div>
+
+          <h2>
+            {{ event.name }}
+          </h2>
+
+          <p
+            class="category"
+            *ngIf="event.category"
+          >
+            {{ event.category }}
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Event Details -->
+      <div class="details-grid">
+
+        <div class="detail-item">
+          <span>Date</span>
+          <strong>{{ event.eventDate }}</strong>
+        </div>
+
+        <div
+          class="detail-item"
+          *ngIf="event.eventTime"
+        >
+          <span>Time</span>
+          <strong>{{ event.eventTime }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Venue</span>
+          <strong>{{ event.venue.name }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Location</span>
+          <strong>{{ event.venue.location }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Ticket Price</span>
+          <strong>₹{{ event.ticketPrice }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Total Seats</span>
+          <strong>{{ event.totalSeats }}</strong>
+        </div>
+
+      </div>
+
+
+      <!-- Seat Selection -->
+      <div class="seat-section">
+
+        <div class="section-heading">
+          <h3>Select Your Seat</h3>
+
+          <p>
+            Choose one available seat for your ticket.
+          </p>
+        </div>
+
+
+        <!-- Seat Loading -->
+        <div
+          class="seat-loading"
+          *ngIf="isLoadingSeats"
+        >
+          Loading available seats...
+        </div>
+
+
+        <!-- No Seats -->
+        <div
+          class="no-seats"
+          *ngIf="!isLoadingSeats && seats.length === 0"
+        >
+          No available seats found for this venue.
+        </div>
+
+
+        <!-- Seat Grid -->
+        <div
+          class="seat-grid"
+          *ngIf="!isLoadingSeats && seats.length > 0"
+        >
+
+          <button
+            type="button"
+            class="seat"
+            *ngFor="let seat of seats"
+            [class.selected]="selectedSeat?.id === seat.id"
+            (click)="selectSeat(seat)"
+          >
+
+            <span class="seat-number">
+              {{ seat.seatNumber }}
+            </span>
+
+            <span class="seat-type">
+              {{ seat.seatType }}
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <!-- Selected Seat -->
+        <div
+          class="selected-seat"
+          *ngIf="selectedSeat"
+        >
+          Selected Seat:
+
+          <strong>
+            {{ selectedSeat.seatNumber }}
+          </strong>
+
+          <span>
+            ({{ selectedSeat.seatType }})
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Guest Selection -->
+      <div class="booking-form">
+
+        <label for="guests">
+          Number of Guests
+        </label>
+
+        <input
+          type="number"
+          id="guests"
+          name="guests"
+          min="1"
+          max="1"
+          [(ngModel)]="numberOfGuests"
+          (ngModelChange)="calculateTotal()"
+        />
+
+        <small>
+          One seat is selected for this booking.
+        </small>
+
+      </div>
+
+
+      <!-- Total -->
+      <div class="total-section">
+
+        <span>
+          Total Amount
+        </span>
+
+        <strong>
+          ₹{{ totalAmount }}
+        </strong>
+
+      </div>
+
+
+      <!-- Error -->
+      <p
+        class="error-message"
+        *ngIf="errorMessage"
+      >
+        {{ errorMessage }}
+      </p>
+
+
+      <!-- Success -->
+      <p
+        class="success-message"
+        *ngIf="message"
+      >
+        {{ message }}
+      </p>
+
+
+      <!-- Confirm -->
+      <button
+        type="button"
+        class="confirm-btn"
+        (click)="confirmBooking()"
+        [disabled]="isBooking || !!message || !selectedSeat"
+      >
+        {{ isBooking ? 'Confirming Booking...' : 'Confirm Booking' }}
+      </button>
+
+    </div>
+
+  </main>
+
+</div>

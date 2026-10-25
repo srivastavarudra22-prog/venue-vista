@@ -1,0 +1,198 @@
+<div class="tickets-page">
+
+  <!-- Header -->
+  <header class="tickets-header">
+
+    <div>
+      <h1>VenueVista</h1>
+      <p>My Tickets</p>
+    </div>
+
+    <a
+      routerLink="/dashboard"
+      class="back-btn"
+    >
+      Back to Dashboard
+    </a>
+
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="tickets-content">
+
+    <div class="page-title">
+      <h2>My Tickets</h2>
+      <p>View all your purchased event tickets.</p>
+    </div>
+
+
+    <!-- Loading -->
+    <div
+      class="loading-message"
+      *ngIf="isLoading"
+    >
+      Loading your tickets...
+    </div>
+
+
+    <!-- Error -->
+    <div
+      class="error-message"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- No Tickets -->
+    <div
+      class="empty-message"
+      *ngIf="!isLoading && !errorMessage && tickets.length === 0"
+    >
+      <div class="empty-icon">🎟️</div>
+
+      <h3>No Tickets Found</h3>
+
+      <p>
+        You do not have any tickets yet.
+      </p>
+
+      <a
+        routerLink="/events"
+        class="browse-btn"
+      >
+        Browse Events
+      </a>
+    </div>
+
+
+    <!-- Ticket Cards -->
+    <div
+      class="tickets-grid"
+      *ngIf="!isLoading && tickets.length > 0"
+    >
+
+      <div
+        class="ticket-card"
+        *ngFor="let ticket of tickets"
+      >
+
+        <!-- Ticket Header -->
+        <div class="ticket-header">
+
+          <div class="ticket-icon">
+            🎟️
+          </div>
+
+          <div>
+            <span class="ticket-label">
+              Ticket Number
+            </span>
+
+            <strong>
+              {{ ticket.ticketNumber }}
+            </strong>
+          </div>
+
+          <span
+            class="status"
+            [class.cancelled]="ticket.status === 'CANCELLED'"
+          >
+            {{ ticket.status }}
+          </span>
+
+        </div>
+
+
+        <!-- Ticket Details -->
+        <div class="ticket-details">
+
+          <div class="detail-item">
+            <span>Event</span>
+
+            <strong>
+              {{ ticket.event?.name || 'Event' }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Event Date</span>
+
+            <strong>
+              {{ ticket.event?.eventDate || 'Not available' }}
+            </strong>
+          </div>
+
+
+          <div
+            class="detail-item"
+            *ngIf="ticket.event?.eventTime"
+          >
+            <span>Event Time</span>
+
+            <strong>
+              {{ ticket.event?.eventTime }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Seat Number</span>
+
+            <strong>
+              {{ ticket.seat?.seatNumber || 'Not assigned' }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Seat Type</span>
+
+            <strong>
+              {{ ticket.seat?.seatType || 'Not available' }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Row</span>
+
+            <strong>
+              {{ ticket.seat?.rowName || 'Not available' }}
+            </strong>
+          </div>
+
+
+          <div class="detail-item">
+            <span>Ticket Price</span>
+
+            <strong class="price">
+              ₹{{ ticket.price }}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <!-- Ticket Footer -->
+        <div class="ticket-footer">
+
+          <span>
+            VenueVista Event Ticket
+          </span>
+
+          <span>
+            {{ ticket.status }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>

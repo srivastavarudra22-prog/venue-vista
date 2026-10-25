@@ -1,0 +1,223 @@
+<div class="payment-page">
+
+  <!-- Header -->
+  <header class="payment-header">
+
+    <div>
+      <h1>VenueVista</h1>
+      <p>Secure Payment</p>
+    </div>
+
+    <a
+      routerLink="/dashboard"
+      class="back-btn"
+    >
+      Back to Dashboard
+    </a>
+
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="payment-content">
+
+    <div class="payment-card">
+
+      <div class="payment-title">
+        <div class="payment-icon">
+          💳
+        </div>
+
+        <div>
+          <h2>Complete Payment</h2>
+          <p>Choose your payment method.</p>
+        </div>
+      </div>
+
+
+      <!-- Booking Details -->
+      <div class="payment-summary">
+
+        <div>
+          <span>Booking ID</span>
+
+          <strong>
+            #{{ bookingId }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Amount</span>
+
+          <strong class="amount">
+            ₹{{ amount }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <!-- Payment Methods -->
+      <div class="form-section">
+
+        <label>
+          Payment Method
+        </label>
+
+        <div class="payment-methods">
+
+          <label
+            class="payment-option"
+            [class.selected]="paymentMethod === 'UPI'"
+          >
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="UPI"
+              [(ngModel)]="paymentMethod"
+            />
+
+            <span class="method-icon">
+              📱
+            </span>
+
+            <span>
+              <strong>UPI</strong>
+              <small>Pay using UPI</small>
+            </span>
+
+          </label>
+
+
+          <label
+            class="payment-option"
+            [class.selected]="paymentMethod === 'CARD'"
+          >
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="CARD"
+              [(ngModel)]="paymentMethod"
+            />
+
+            <span class="method-icon">
+              💳
+            </span>
+
+            <span>
+              <strong>Card</strong>
+              <small>Credit / Debit Card</small>
+            </span>
+
+          </label>
+
+
+          <label
+            class="payment-option"
+            [class.selected]="paymentMethod === 'CASH'"
+          >
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="CASH"
+              [(ngModel)]="paymentMethod"
+            />
+
+            <span class="method-icon">
+              💵
+            </span>
+
+            <span>
+              <strong>Cash</strong>
+              <small>Cash payment</small>
+            </span>
+
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <!-- Error -->
+      <p
+        class="error-message"
+        *ngIf="errorMessage"
+      >
+        {{ errorMessage }}
+      </p>
+
+
+      <!-- Success -->
+      <div
+        class="success-box"
+        *ngIf="paymentSuccess"
+      >
+
+        <div class="success-icon">
+          ✓
+        </div>
+
+        <h3>Payment Successful!</h3>
+
+        <p>
+          {{ message }}
+        </p>
+
+      </div>
+
+      <p
+        class="success-message"
+        *ngIf="message && !paymentSuccess"
+      >
+        {{ message }}
+      </p>
+
+
+      <!-- Pay Button -->
+      <button
+        type="button"
+        class="pay-btn"
+        (click)="makePayment()"
+        [disabled]="isPaying || paymentSuccess"
+      >
+        {{
+          isPaying
+            ? 'Processing Payment...'
+            : 'Pay ₹' + amount
+        }}
+      </button>
+
+
+      <!-- After Payment -->
+      <div
+        class="after-payment"
+        *ngIf="paymentSuccess"
+      >
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="goToBookings()"
+        >
+          My Bookings
+        </button>
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="goToTickets()"
+        >
+          My Tickets
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>

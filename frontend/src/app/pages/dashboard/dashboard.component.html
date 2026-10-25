@@ -1,0 +1,147 @@
+<div class="dashboard-page">
+
+  <!-- Navbar -->
+  <header class="navbar">
+
+    <div class="logo">
+      VenueVista
+    </div>
+
+    <div class="nav-right">
+
+      <a
+        *ngIf="isProviderOrAdmin"
+        routerLink="/provider/dashboard"
+        style="background: #4f46e5; color: #fff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"
+      >
+        🏛️ Provider Panel
+      </a>
+
+      <span class="welcome">
+        Welcome, {{ userName }}
+      </span>
+
+      <button
+        class="logout-btn"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="dashboard-content">
+
+    <div class="dashboard-heading">
+
+      <h1>Dashboard</h1>
+
+      <p>
+        Manage your events, venues and bookings from one place.
+      </p>
+
+    </div>
+
+
+    <div class="dashboard-grid">
+
+      <!-- Venues -->
+      <div class="dashboard-card">
+
+        <div class="card-icon">
+          🏢
+        </div>
+
+        <h2>Venues</h2>
+
+        <p>
+          Explore available venues and their details.
+        </p>
+
+        <a
+          routerLink="/venues"
+          class="card-btn"
+        >
+          View Venues
+        </a>
+
+      </div>
+
+
+      <!-- Events -->
+      <div class="dashboard-card">
+
+        <div class="card-icon">
+          🎫
+        </div>
+
+        <h2>Events</h2>
+
+        <p>
+          Browse upcoming events and ticket information.
+        </p>
+
+        <a
+          routerLink="/events"
+          class="card-btn"
+        >
+          View Events
+        </a>
+
+      </div>
+
+
+      <!-- My Bookings -->
+      <div class="dashboard-card">
+
+        <div class="card-icon">
+          📅
+        </div>
+
+        <h2>My Bookings</h2>
+
+        <p>
+          View all your previous and current bookings.
+        </p>
+
+        <a
+          routerLink="/my-bookings"
+          class="card-btn"
+        >
+          My Bookings
+        </a>
+
+      </div>
+
+
+      <!-- My Tickets -->
+      <div class="dashboard-card">
+
+        <div class="card-icon">
+          🎟️
+        </div>
+
+        <h2>My Tickets</h2>
+
+        <p>
+          Check your purchased tickets and ticket status.
+        </p>
+
+        <a
+          routerLink="/tickets"
+          class="card-btn"
+        >
+          My Tickets
+        </a>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>

@@ -1,0 +1,90 @@
+<div class="login-page">
+
+  <div class="login-card">
+
+    <div class="login-header">
+      <h1>VenueVista</h1>
+      <p>Welcome back! Please login to continue.</p>
+    </div>
+
+    <form (ngSubmit)="login()">
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          [(ngModel)]="email"
+          required
+        />
+
+        <small class="password-info">
+          Enter a valid email address.
+        </small>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          [(ngModel)]="password"
+          required
+        />
+      </div>
+
+      <!-- Login Button -->
+      <button
+        type="submit"
+        class="login-btn"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
+
+    </form>
+
+    <!-- Success Message -->
+    <p
+      class="success-message"
+      *ngIf="message"
+    >
+      {{ message }}
+    </p>
+
+    <!-- Error Message -->
+    <p
+      class="error-message"
+      *ngIf="errorMessage"
+    >
+      {{ errorMessage }}
+    </p>
+
+    <!-- Register Link -->
+    <div class="register-link">
+      <p>Don't have an account?</p>
+
+      <a routerLink="/register">
+        Create an account
+      </a>
+    </div>
+
+    <!-- Provider Portal Switcher -->
+    <div class="provider-switch-box" style="margin-top: 20px; padding: 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center;">
+      <span style="font-size: 13px; color: #64748b; display: block; margin-bottom: 6px;">Are you a Venue Host or Provider?</span>
+      <a routerLink="/provider/login" style="color: #4f46e5; font-weight: 600; text-decoration: none; font-size: 14px;">
+        🏛️ Go to Provider Portal &rarr;
+      </a>
+    </div>
+
+  </div>
+
+</div>
