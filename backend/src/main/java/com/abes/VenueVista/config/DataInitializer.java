@@ -38,7 +38,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        User demoUser = userRepository.findByEmail("demo@example.com").orElse(null);
+        User demoUser = userRepository.findFirstByEmailOrderByIdAsc("demo@example.com").orElse(null);
         if (demoUser == null) {
             demoUser = new User();
             demoUser.setName("Demo User");
@@ -49,7 +49,7 @@ public class DataInitializer implements CommandLineRunner {
             demoUser = userRepository.save(demoUser);
         }
 
-        if (userRepository.findByEmail("provider@example.com").isEmpty()) {
+        if (userRepository.findFirstByEmailOrderByIdAsc("provider@example.com").isEmpty()) {
             User providerUser = new User();
             providerUser.setName("Royal Events Provider");
             providerUser.setEmail("provider@example.com");
@@ -59,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(providerUser);
         }
 
-        if (userRepository.findByEmail("admin@example.com").isEmpty()) {
+        if (userRepository.findFirstByEmailOrderByIdAsc("admin@example.com").isEmpty()) {
             User adminUser = new User();
             adminUser.setName("Admin User");
             adminUser.setEmail("admin@example.com");
@@ -67,6 +67,12 @@ public class DataInitializer implements CommandLineRunner {
             adminUser.setPhone("9876543211");
             adminUser.setRole("ADMIN");
             userRepository.save(adminUser);
+        }
+
+        // Check if Rudra Srivastava accounts exist
+        java.util.List<User> rudraUsers = userRepository.findAllByEmailOrderByIdAsc("srivastavarudra22@gmail.com");
+        if (!rudraUsers.isEmpty()) {
+            System.out.println("VenueVista found " + rudraUsers.size() + " account(s) for srivastavarudra22@gmail.com");
         }
 
         if (venueRepository.count() == 0) {

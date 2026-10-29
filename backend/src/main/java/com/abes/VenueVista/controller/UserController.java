@@ -29,6 +29,19 @@ public class UserController {
         return userService.loginUser(request);
     }
 
+    @PostMapping("/reset-password")
+    public java.util.Map<String, String> resetPassword(@RequestBody java.util.Map<String, String> request) {
+        String email = request.get("email");
+        String newPassword = request.get("newPassword");
+        if (email == null || newPassword == null || newPassword.trim().isEmpty()) {
+            throw new RuntimeException("Email and newPassword are required");
+        }
+        userService.resetPassword(email, newPassword);
+        java.util.Map<String, String> response = new java.util.HashMap<>();
+        response.put("message", "Password reset successfully");
+        return response;
+    }
+
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();

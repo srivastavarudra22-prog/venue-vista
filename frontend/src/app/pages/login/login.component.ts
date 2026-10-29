@@ -39,7 +39,8 @@ export class LoginComponent {
 
     this.authService.login(
       this.email,
-      this.password
+      this.password,
+      'CUSTOMER'
     ).subscribe({
 
       // Login successful

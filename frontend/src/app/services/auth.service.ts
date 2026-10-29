@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 interface LoginRequest {
   email: string;
   password: string;
+  role?: string;
 }
 
 export interface LoginResponse {
@@ -42,12 +43,14 @@ export class AuthService {
 
   login(
     email: string,
-    password: string
+    password: string,
+    role?: string
   ): Observable<LoginResponse> {
 
     const loginData: LoginRequest = {
       email: email,
-      password: password
+      password: password,
+      role: role
     };
 
     return this.http.post<LoginResponse>(

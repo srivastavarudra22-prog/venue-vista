@@ -33,7 +33,7 @@ export class ProviderLoginComponent {
     this.errorMessage = '';
     this.isLoading = true;
 
-    this.authService.login(this.email, this.password).subscribe({
+    this.authService.login(this.email, this.password, 'PROVIDER').subscribe({
       next: (response) => {
         const role = (response.role || '').toUpperCase();
         

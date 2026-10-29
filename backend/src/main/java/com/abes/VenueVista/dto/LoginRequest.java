@@ -12,6 +12,8 @@ public class LoginRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
+    private String role;
+
     public LoginRequest() {
     }
 
@@ -29,5 +31,13 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
